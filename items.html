@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items List</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: hsl(0, 0%, 100%);
+            padding: 20px;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid rgb(0, 0, 0);
+        }
+        th {
+            background-color: #ff0000f3;
+        }
+        button {
+            cursor: pointer;
+            padding: 5px 10px;
+            margin: 2px;
+        }
+        .expiring-today {
+            background-color: #ffe600;
+        }
+    </style>
+</head>
+<body>
+    <h1>Saved Items</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Expiry Date</th>
+                <th>Item Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="itemsList">
+            <!-- Products will be listed here -->
+        </tbody>
+    </table>
+    
+    <button onclick="goBack()">GO BACK</button>
+
+    <script>
+        function loadProducts() {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            let tableBody = document.getElementById('itemsList');
+            tableBody.innerHTML = "";
+            let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+            products.forEach((product, index) => {
+                let isExpiringToday = product.expiry === today;
+                let rowClass = isExpiringToday ? 'expiring-today' : '';
+
+                let row = `<tr class="${rowClass}">
+                    <td contenteditable="true" onblur="updateProduct(${index}, 'name', this.innerText)">${product.name}</td>
+                    <td contenteditable="true" onblur="updateProduct(${index}, 'expiry', this.innerText)">${product.expiry}</td>
+                    <td contenteditable="true" onblur="updateProduct(${index}, 'item', this.innerText)">${product.item}</td>
+                    <td>
+                        <button onclick="deleteProduct(${index})">Delete</button>
+                    </td>
+                </tr>`;
+
+                tableBody.innerHTML += row;
+
+                if (isExpiringToday) {
+                    alert(`Reminder: The product "${product.name}" is expiring today!`);
+                }
+            });
+        }
+
+        function updateProduct(index, key, value) {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products[index][key] = value;
+            localStorage.setItem('products', JSON.stringify(products));
+            loadProducts();
+        }
+
+        function deleteProduct(index) {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products.splice(index, 1);
+            localStorage.setItem('products', JSON.stringify(products));
+            loadProducts();
+        }
+
+        function goBack() {
+            window.location.href = 'product.html';
+        }
+
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>

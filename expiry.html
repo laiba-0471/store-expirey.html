@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expiry Page</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-color: #f8f8f8;
+        }
+        input, select {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            text-align: center;
+        }
+        .done-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: grey;
+            color: white;
+            border: none;
+            cursor: not-allowed;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .done-button.active {
+            background-color: #28a745;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Expiry Entry</h1>
+    <input type="text" id="productName" placeholder="Product Name">
+    <input type="date" id="expiryDate" placeholder="Expiry Date">
+    <select id="itemType">
+        <option value="">Select Item</option>
+        <option value="Grocery">Grocery</option>
+        <option value="Stationery">Stationery</option>
+        <option value="Crockery">Crockery</option>
+    </select>
+    <button id="doneButton" class="done-button" disabled onclick="redirectToProduct()">DONE</button>
+    
+    <script>
+        const productName = document.getElementById('productName');
+        const expiryDate = document.getElementById('expiryDate');
+        const itemType = document.getElementById('itemType');
+        const doneButton = document.getElementById('doneButton');
+
+        function checkFields() {
+            if (productName.value.trim() !== "" && expiryDate.value.trim() !== "" && itemType.value !== "") {
+                doneButton.disabled = false;
+                doneButton.classList.add('active');
+            } else {
+                doneButton.disabled = true;
+                doneButton.classList.remove('active');
+            }
+        }
+
+        productName.addEventListener('input', checkFields);
+        expiryDate.addEventListener('input', checkFields);
+        itemType.addEventListener('change', checkFields);
+
+        function redirectToProduct() {
+            if (!doneButton.disabled) {
+                const productData = {
+                    name: productName.value,
+                    expiry: expiryDate.value,
+                    item: itemType.value
+                };
+                localStorage.setItem('product', JSON.stringify(productData));
+                window.location.href = 'product.html';
+            }
+        }
+    </script>
+</body>
+</html>
